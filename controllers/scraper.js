@@ -17,7 +17,9 @@ const scraper = {
             timeout: 0,
         });
         // scraping
-        await scraper.page.waitForSelector("div#primary");
+        await scraper.page.waitForSelector("div#primary", {
+            timeout: 0,
+        });
         let animeTerbaru = await scraper.page.$$eval(".widget_senction:nth-child(1) article", (article) => {
             let titles = article.map(el => el.querySelector(".dataver2 .title").innerText);
             let images = article.map(el => el.querySelector("img").getAttribute("src"));
@@ -31,7 +33,7 @@ const scraper = {
                 data.push({
                     imageUrl: images[i],
                     title: titles[i],
-                    linkId: links[i].replace("https://animeindo.link", ""),
+                    streamId: links[i].replace("https://animeindo.link", ""),
                     episode: episode[i],
                     serial: serials[i],
                 });
@@ -51,7 +53,9 @@ const scraper = {
         await scraper.page.goto(scraper.base_url + "/populer/" + pagination, {
             timeout: 0,
         });
-        await scraper.page.waitForSelector("main#main");
+        await scraper.page.waitForSelector("main#main", {
+            timeout: 0,
+        });
         // scraping
         let animePopuler = await scraper.page.$$eval("div.relat article", (article) => {
             let titles = article.map(el => el.querySelector(".title h2").innerText);
@@ -87,7 +91,9 @@ const scraper = {
         await scraper.page.goto(scraper.base_url + "/daftar-anime/" + pagination, {
             timeout: 0,
         });
-        await scraper.page.waitForSelector("main#main");
+        await scraper.page.waitForSelector("main#main", {
+            timeout: 0,
+        });
         // scraping
         let daftarAnime = await scraper.page.$$eval("div.relat article", (article) => {
             let titles = article.map(el => el.querySelector(".title h2").innerText);
@@ -192,7 +198,9 @@ const scraper = {
         await scraper.page.goto(scraper.base_url + "/" + pagination + "?s=" + search, {
             timeout: 0,
         });
-        await scraper.page.waitForSelector("main#main");
+        await scraper.page.waitForSelector("main#main", {
+            timeout: 0
+        });
         // scraping
         let searchAnime = await scraper.page.$$eval("article", (article) => {
             let titles = article.map(el => el.querySelector(".title h2").innerText);
@@ -246,7 +254,9 @@ const scraper = {
             waitUntil: "domcontentloaded",
             timeout: 0,
         });
-        await page.waitForSelector("video");
+        await page.waitForSelector("video", {
+            timeout: 0
+        });
         let streamLink = await page.evaluate(() => document.querySelector("video").getAttribute("src"));
         browser.close();
 
