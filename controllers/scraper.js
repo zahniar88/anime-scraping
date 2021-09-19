@@ -13,7 +13,9 @@ const scraper = {
         scraper.page = await scraper.browser.newPage();
     },
     animeTerbaru: async () => {
-        await scraper.page.goto(scraper.base_url);
+        await scraper.page.goto(scraper.base_url, {
+            timeout: 0,
+        });
         // scraping
         await scraper.page.waitForSelector("div#primary");
         let animeTerbaru = await scraper.page.$$eval(".widget_senction:nth-child(1) article", (article) => {
@@ -46,7 +48,9 @@ const scraper = {
     },
     animePopuler: async (page = null) => {
         const pagination = page == null ? "" : "page/" + page;
-        await scraper.page.goto(scraper.base_url + "/populer/" + pagination);
+        await scraper.page.goto(scraper.base_url + "/populer/" + pagination, {
+            timeout: 0,
+        });
         await scraper.page.waitForSelector("main#main");
         // scraping
         let animePopuler = await scraper.page.$$eval("div.relat article", (article) => {
@@ -80,7 +84,9 @@ const scraper = {
     },
     daftarAnime: async (page = null) => {
         const pagination = page == null ? "" : "page/" + page;
-        await scraper.page.goto(scraper.base_url + "/daftar-anime/" + pagination);
+        await scraper.page.goto(scraper.base_url + "/daftar-anime/" + pagination, {
+            timeout: 0,
+        });
         await scraper.page.waitForSelector("main#main");
         // scraping
         let daftarAnime = await scraper.page.$$eval("div.relat article", (article) => {
@@ -113,7 +119,8 @@ const scraper = {
     },
     detailAnime: async (linkId) => {
         await scraper.page.goto(scraper.base_url + "/anime/" + linkId, {
-            waitUntil: "networkidle2"
+            waitUntil: "networkidle2",
+            timeout: 0,
         });
 
         // scraping data
@@ -182,7 +189,9 @@ const scraper = {
     },
     searchAnime: async (search, page = null) => {
         const pagination = page == null ? "" : "page/" + page;
-        await scraper.page.goto(scraper.base_url + "/" + pagination + "?s=" + search);
+        await scraper.page.goto(scraper.base_url + "/" + pagination + "?s=" + search, {
+            timeout: 0,
+        });
         await scraper.page.waitForSelector("main#main");
         // scraping
         let searchAnime = await scraper.page.$$eval("article", (article) => {
@@ -216,11 +225,13 @@ const scraper = {
     },
     getStreamlink: async (streamId) => {
         await scraper.page.goto(scraper.base_url + "/" + streamId, {
-            waitUntil: "networkidle2"
+            waitUntil: "networkidle2",
+            timeout: 0
         });
 
         let iframe = await scraper.page.evaluate(() => document.querySelector("iframe.playeriframe").getAttribute("src"));
         await scraper.browser.close();
+        let newUrl = (iframe.indexOf("http:") == 0 || iframe.indexOf("https:") == 0) ? iframe : "https:" + iframe;
 
         const browser = await puppeteer.launch({
             headless: true,
@@ -231,15 +242,18 @@ const scraper = {
             ]
         });
         const page = await browser.newPage();
-        await page.goto(iframe, {
-            waitUntil: "domcontentloaded"
+        await page.goto(newUrl, {
+            waitUntil: "domcontentloaded",
+            timeout: 0,
         });
         await page.waitForSelector("video");
         let streamLink = await page.evaluate(() => document.querySelector("video").getAttribute("src"));
         browser.close();
 
+        let newStreamLink = (streamLink.indexOf("http:") == 0 || streamLink.indexOf("https:") == 0) ? streamLink : "https:" + streamLink;
+
         return JSON.stringify({
-            streamLink: streamLink,
+            streamLink: newStreamLink,
         })
     },
 }

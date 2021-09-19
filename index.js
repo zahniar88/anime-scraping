@@ -71,8 +71,8 @@ app.get("/watch/:streamId", async (req, res, next) => {
     try {
         await scraper.initialize();
         let data = await scraper.getStreamlink(req.params.streamId);
-        res.setHeader('Content-Type', 'application/json');
-        res.setHeader('Cache-Control', 's-max-age=1, stale-while-revalidate');
+        // res.setHeader('Content-Type', 'application/json');
+        // res.setHeader('Cache-Control', 's-max-age=1, stale-while-revalidate');
         res.end(data);
     } catch (error) {
         next(error);
