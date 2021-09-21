@@ -33,7 +33,7 @@ const scraper = {
                 data.push({
                     imageUrl: images[i],
                     title: titles[i],
-                    streamId: links[i].replace("https://animeindo.link", ""),
+                    streamId: links[i].replace("https://animeindo.link/", "").replace("/", ""),
                     episode: episode[i],
                     serial: serials[i],
                 });
@@ -70,7 +70,7 @@ const scraper = {
                 data.push({
                     title: titles[i],
                     image: images[i],
-                    linkId: links[i].replace("https://animeindo.link", ""),
+                    linkId: links[i].replace("https://animeindo.link/anime/", "").replace("/", ""),
                     rating: ratings[i].trim(),
                     serial: serials[i],
                     type: types[i],
@@ -108,7 +108,7 @@ const scraper = {
                 data.push({
                     title: titles[i],
                     image: images[i],
-                    linkId: links[i].replace("https://animeindo.link", ""),
+                    linkId: links[i].replace("https://animeindo.link/anime/", "").replace("/", ""),
                     rating: ratings[i].trim(),
                     serial: serials[i],
                     type: types[i],
@@ -173,7 +173,7 @@ const scraper = {
             for (let i = 0; i < epsNum.length; i++) {
                 data.push({
                     episodeNumber: epsNum[i],
-                    streamId: links[i].replace("https://animeindo.link", ""),
+                    streamId: links[i].replace("https://animeindo.link/", "").replace("/", ""),
                     releaseDate: dates[i],
                 })
             }
@@ -215,7 +215,7 @@ const scraper = {
                 data.push({
                     title: titles[i],
                     image: images[i],
-                    linkId: links[i].replace("https://animeindo.link", ""),
+                    linkId: links[i].replace("https://animeindo.link/anime/", "").replace("/", ""),
                     rating: ratings[i].trim(),
                     serial: serials[i],
                     type: types[i],
@@ -239,31 +239,9 @@ const scraper = {
 
         let iframe = await scraper.page.evaluate(() => document.querySelector("iframe.playeriframe").getAttribute("src"));
         await scraper.browser.close();
-        let newUrl = (iframe.indexOf("http:") == 0 || iframe.indexOf("https:") == 0) ? iframe : "https:" + iframe;
-
-        const browser = await puppeteer.launch({
-            headless: true,
-            defaultViewport: null,
-            args: [
-                '--no-sandbox',
-                '--disable-setuid-sandbox'
-            ]
-        });
-        const page = await browser.newPage();
-        await page.goto(newUrl, {
-            waitUntil: "domcontentloaded",
-            timeout: 0,
-        });
-        await page.waitForSelector("video", {
-            timeout: 0
-        });
-        let streamLink = await page.evaluate(() => document.querySelector("video").getAttribute("src"));
-        browser.close();
-
-        let newStreamLink = (streamLink.indexOf("http:") == 0 || streamLink.indexOf("https:") == 0) ? streamLink : "https:" + streamLink;
 
         return JSON.stringify({
-            streamLink: newStreamLink,
+            streamLink: iframe,
         })
     },
 }
